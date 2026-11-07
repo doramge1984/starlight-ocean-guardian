@@ -228,6 +228,7 @@ export default function App() {
           graphicsQuality={graphicsQuality}
           activeEmote={activeEmote}
           mobileMoveVector={mobileMove}
+          isStartScreen={gameState === 'start'}
         />
       </div>
 
@@ -300,23 +301,23 @@ export default function App() {
 
       {/* 3. Start Screen Overlay */}
       {gameState === 'start' && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-slate-900/90 border-2 border-cyan-500/40 rounded-3xl w-full max-w-xl p-6 md:p-8 shadow-2xl flex flex-col gap-5">
+        <div className="absolute inset-0 z-30 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-[2px] animate-fadeIn">
+          <div className="bg-slate-900/65 backdrop-blur-xl border border-white/20 rounded-3xl w-full max-w-xl p-6 md:p-8 shadow-[0_8px_32px_0_rgba(0,0,0,0.6)] flex flex-col gap-5">
             {/* Title & Core Message */}
             <div className="text-center flex flex-col items-center">
-              <span className="text-xs font-mono font-bold tracking-widest text-cyan-400 uppercase mb-1">
-                게임문화재단 교사 게임리터러시 공모전 출품작
+              <span className="text-[11px] font-mono font-bold tracking-widest text-emerald-300 uppercase mb-1 drop-shadow-[0_0_8px_rgba(60,255,176,0.6)]">
+                ⭐ 게임문화재단 교사 게임리터러시 공모전 출품작 ⭐
               </span>
-              <h1 className="text-2xl md:text-3xl font-black text-white drop-shadow-[0_0_15px_rgba(6,182,212,0.8)]">
+              <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-emerald-300 via-cyan-300 to-purple-300 bg-clip-text text-transparent drop-shadow-[0_0_20px_rgba(46,197,255,0.7)]">
                 별빛 바다 지킴이: 과학으로 되살리는 바다
               </h1>
-              <p className="text-xs md:text-sm text-cyan-200/90 mt-2 max-w-md leading-relaxed">
+              <p className="text-xs md:text-sm text-cyan-100/90 mt-2 max-w-md leading-relaxed font-medium">
                 “게임은 세상을 바꾸는 힘이 있습니다. 과학으로 바다의 문제를 이해하고, 바다를 되살리고, 직접 친환경 게임 장치를 설계합니다.”
               </p>
             </div>
 
             {/* Profile Form */}
-            <div className="flex flex-col gap-3.5 bg-slate-950/60 p-4 rounded-2xl border border-slate-800">
+            <div className="flex flex-col gap-3.5 bg-slate-950/50 backdrop-blur-md p-4 rounded-2xl border border-white/10">
               {/* Nickname */}
               <div>
                 <div className="flex justify-between items-center mb-1">
@@ -429,7 +430,7 @@ export default function App() {
             {/* Start Button */}
             <button
               onClick={handleStartGame}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-black text-base md:text-lg shadow-xl shadow-cyan-500/30 transition transform hover:scale-102 flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-cyan-500 to-purple-600 hover:from-emerald-400 hover:to-purple-500 text-white font-black text-base md:text-lg shadow-[0_0_30px_rgba(46,197,255,0.45)] transition transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer border border-white/20"
             >
               <Play className="w-5 h-5 fill-current" />
               <span>바다로 들어가기 (3D 오프닝 시네마틱)</span>
@@ -442,10 +443,10 @@ export default function App() {
       {gameState === 'cinematic' && (
         <div className="absolute inset-0 z-30 pointer-events-none flex flex-col justify-between p-8">
           <div className="text-center animate-pulse pt-12">
-            <h2 className="text-3xl md:text-5xl font-black text-white drop-shadow-[0_0_25px_rgba(6,182,212,1)]">
+            <h2 className="text-3xl md:text-6xl font-black bg-gradient-to-r from-emerald-300 via-cyan-200 to-purple-300 bg-clip-text text-transparent drop-shadow-[0_0_35px_rgba(60,255,176,0.9)]">
               별빛 바다 지킴이
             </h2>
-            <p className="text-sm md:text-base text-cyan-300 font-semibold mt-2">
+            <p className="text-sm md:text-lg text-cyan-200 font-semibold mt-3 drop-shadow-[0_0_15px_rgba(0,0,0,0.8)]">
               과학으로 되살리는 바다의 세계로 내려갑니다...
             </p>
           </div>
@@ -453,7 +454,7 @@ export default function App() {
           <div className="flex justify-end pointer-events-auto">
             <button
               onClick={handleCinematicSkip}
-              className="px-4 py-2 rounded-xl bg-slate-900/80 border border-slate-700 text-slate-200 hover:text-white font-semibold text-xs transition cursor-pointer"
+              className="px-5 py-2.5 rounded-2xl bg-slate-900/70 backdrop-blur-md border border-white/20 text-white hover:bg-slate-850 font-bold text-xs md:text-sm shadow-xl transition cursor-pointer"
             >
               시네마틱 건너뛰기 ⏩
             </button>
@@ -466,8 +467,8 @@ export default function App() {
         <>
           {/* Top-Left: Stage Name */}
           <div className="absolute top-4 left-4 z-20 pointer-events-none">
-            <div className="px-4 py-2.5 rounded-2xl bg-slate-900/85 border border-cyan-500/40 backdrop-blur-sm shadow-xl flex flex-col">
-              <span className="text-[10px] font-mono uppercase text-cyan-400 tracking-wider font-semibold">
+            <div className="px-4 py-2.5 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/15 shadow-[0_4px_24px_rgba(0,0,0,0.5)] flex flex-col">
+              <span className="text-[10px] font-mono uppercase text-emerald-400 tracking-wider font-bold drop-shadow-[0_0_6px_rgba(60,255,176,0.6)]">
                 CURRENT STAGE ({currentStage}/5)
               </span>
               <h2 className="text-sm md:text-base font-bold text-white">
@@ -478,9 +479,9 @@ export default function App() {
 
           {/* Top-Center: Guidance Speech Bubble */}
           <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-20 pointer-events-none max-w-md w-full px-4 hidden sm:block">
-            <div className="px-4 py-2 rounded-2xl bg-slate-900/90 border border-slate-700 shadow-xl flex items-center gap-2 text-center justify-center">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <p className="text-xs text-slate-200 font-medium truncate">
+            <div className="px-5 py-2.5 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/15 shadow-[0_4px_24px_rgba(0,0,0,0.5)] flex items-center gap-2 text-center justify-center">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+              <p className="text-xs text-cyan-100 font-semibold truncate drop-shadow">
                 {getNextTaskGuidance()}
               </p>
             </div>
@@ -489,33 +490,33 @@ export default function App() {
           {/* Top-Right Metrics: Recovery & Badges & Score */}
           <div className="absolute top-16 right-4 z-20 flex flex-col items-end gap-2 pointer-events-none">
             {/* Score & Recovery Pill */}
-            <div className="px-4 py-2 rounded-2xl bg-slate-900/85 border border-cyan-500/40 backdrop-blur-sm shadow-xl flex items-center gap-4">
+            <div className="px-4 py-2 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/15 shadow-[0_4px_24px_rgba(0,0,0,0.5)] flex items-center gap-4">
               <div className="flex flex-col items-end">
-                <span className="text-[10px] text-slate-400 font-mono">바다 회복도</span>
-                <span className="text-sm md:text-base font-bold font-mono text-cyan-400">
+                <span className="text-[10px] text-slate-300 font-mono">바다 회복도</span>
+                <span className="text-sm md:text-base font-bold font-mono text-cyan-300 drop-shadow-[0_0_8px_rgba(46,197,255,0.6)]">
                   {Math.round(oceanRecovery)}%
                 </span>
               </div>
 
-              <div className="w-px h-6 bg-slate-800" />
+              <div className="w-px h-6 bg-white/15" />
 
               <div className="flex flex-col items-end">
-                <span className="text-[10px] text-slate-400 font-mono">총점</span>
-                <span className="text-sm md:text-base font-bold font-mono text-amber-400">
+                <span className="text-[10px] text-slate-300 font-mono">총점</span>
+                <span className="text-sm md:text-base font-bold font-mono text-amber-300 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]">
                   {score.toLocaleString()}점
                 </span>
               </div>
             </div>
 
             {/* Stage Badges 5 Slots */}
-            <div className="px-3 py-1.5 rounded-2xl bg-slate-900/80 border border-slate-800 flex items-center gap-1.5">
+            <div className="px-3 py-1.5 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/15 shadow-[0_4px_24px_rgba(0,0,0,0.5)] flex items-center gap-1.5">
               {[1, 2, 3, 4, 5].map((st) => (
                 <div
                   key={st}
                   className={`w-6 h-6 rounded-lg flex items-center justify-center text-xs transition ${
                     st <= stagesCleared
-                      ? 'bg-amber-500 text-slate-950 font-bold shadow-md shadow-amber-500/30'
-                      : 'bg-slate-800 text-slate-600'
+                      ? 'bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-400/40'
+                      : 'bg-slate-800/80 text-slate-500'
                   }`}
                   title={`스테이지 ${st} 배지`}
                 >
@@ -525,9 +526,9 @@ export default function App() {
             </div>
           </div>
 
-          {/* Bottom Interactive Dock: Collapsible HUD as per Three.js Directive */}
+          {/* Bottom Interactive Dock */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-20 w-full max-w-xl px-4 pointer-events-auto">
-            <div className="p-3 rounded-2xl bg-slate-900/90 border border-slate-700/80 shadow-2xl flex flex-wrap items-center justify-between gap-2">
+            <div className="p-3 rounded-2xl bg-slate-900/60 backdrop-blur-xl border border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.6)] flex flex-wrap items-center justify-between gap-2">
               {/* Main Rhythm Action Buttons */}
               <div className="flex items-center gap-1.5">
                 <button
