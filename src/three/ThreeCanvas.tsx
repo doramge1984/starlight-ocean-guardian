@@ -364,10 +364,86 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
 
     scene.add(islandGroup);
 
-    // Chibi 2-Head Avatar
-    let avatar: AnimatedAvatarGroup = createAnimalAvatar(stateRef.current.avatarType);
-    avatar.position.set(0, 3.6, 10);
+    // Chibi 2-Head Avatar Management with Overhead Nickname Billboard
+    let currentAvatarType = stateRef.current.avatarType;
+    let currentNickname = stateRef.current.nickname;
+    let avatar: AnimatedAvatarGroup = createAnimalAvatar(currentAvatarType);
+    avatar.position.set(0, 3.72, 8.5);
+    avatar.rotation.y = Math.PI; // Face forward towards player on start
     scene.add(avatar);
+
+    let nicknameSprite: THREE.Sprite | null = null;
+    function updateNicknameBillboard(nameStr: string) {
+      if (!avatar) return;
+      if (nicknameSprite) {
+        avatar.remove(nicknameSprite);
+        if (nicknameSprite.material.map) nicknameSprite.material.map.dispose();
+        nicknameSprite.material.dispose();
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 80;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.clearRect(0, 0, 320, 80);
+
+      // Pill container background
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+      ctx.beginPath();
+      ctx.roundRect(14, 10, 292, 60, 30);
+      ctx.fill();
+
+      // Glowing Cyan Border
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3.5;
+      ctx.shadowColor = '#38bdf8';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      ctx.roundRect(14, 10, 292, 60, 30);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // Nickname text
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 26px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const cleanName = (nameStr || '별빛 지킴이').trim();
+      ctx.fillText(`⭐ ${cleanName}`, 160, 41);
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.minFilter = THREE.LinearFilter;
+      const spriteMat = new THREE.SpriteMaterial({
+        map: texture,
+        transparent: true,
+        depthTest: false,
+      });
+      nicknameSprite = new THREE.Sprite(spriteMat);
+      nicknameSprite.scale.set(2.4, 0.6, 1);
+      nicknameSprite.position.set(0, 2.05, 0);
+      avatar.add(nicknameSprite);
+    }
+
+    updateNicknameBillboard(currentNickname);
+
+    function switchAvatarModel(newType: string) {
+      const prevPos = avatar ? avatar.position.clone() : new THREE.Vector3(0, 3.72, 8.5);
+      const prevRotY = avatar ? avatar.rotation.y : Math.PI;
+      if (avatar && avatar.parent) {
+        scene.remove(avatar);
+      }
+      avatar = createAnimalAvatar(newType);
+      avatar.position.copy(prevPos);
+      avatar.rotation.y = prevRotY;
+      scene.add(avatar);
+      updateNicknameBillboard(stateRef.current.nickname);
+
+      // Joyful bounce & spin effect
+      if (avatar.userData.bodyGroup) {
+        avatar.userData.bodyGroup.position.y = 0.45;
+      }
+    }
 
     // Debris items in 3D
     const debrisGroup = new THREE.Group();
@@ -559,15 +635,34 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         });
       }
 
-      // 7. Camera Dynamics: Start Screen Orbit vs 6-Second Descent vs 3rd-Person Follow
+      // Dynamic Avatar Type and Nickname Synchronization
+      if (stateRef.current.avatarType !== currentAvatarType) {
+        currentAvatarType = stateRef.current.avatarType;
+        switchAvatarModel(currentAvatarType);
+      }
+      if (stateRef.current.nickname !== currentNickname) {
+        currentNickname = stateRef.current.nickname;
+        updateNicknameBillboard(currentNickname);
+      }
+
+      // 7. Camera Dynamics: Start Screen Showcase vs 6-Second Cinematic vs 3rd-Person Follow
       if (stateRef.current.isStartScreen) {
-        // Gentle, mesmerizing panoramic camera rotation admiring aurora and full moon
-        startScreenOrbit += delta * 0.04;
-        const r = 58;
-        camera.position.x = Math.sin(startScreenOrbit) * r;
-        camera.position.z = Math.cos(startScreenOrbit) * r;
-        camera.position.y = 35 + Math.sin(startScreenOrbit * 0.5) * 5;
-        camera.lookAt(-10, 20, -35); // towards aurora and moon horizon
+        // Frame the avatar near the campfire in the lower center with the majestic aurora sky above
+        startScreenOrbit += delta * 0.15;
+        const camX = Math.sin(startScreenOrbit) * 3.2;
+        const camY = 5.6 + Math.sin(startScreenOrbit * 0.5) * 0.3;
+        const camZ = 14.8 + Math.cos(startScreenOrbit * 0.4) * 1.2;
+        camera.position.set(camX, camY, camZ);
+        camera.lookAt(avatar.position.x, avatar.position.y + 1.05, avatar.position.z);
+
+        // Friendly idle waving animation on start screen
+        avatar.rotation.y = Math.PI + Math.sin(elapsed * 0.8) * 0.22;
+        if (avatar.userData.bodyGroup) {
+          avatar.userData.bodyGroup.position.y = 0.20 + Math.sin(elapsed * 3.0) * 0.04;
+        }
+        if (avatar.userData.leftArm) {
+          avatar.userData.leftArm.rotation.x = Math.sin(elapsed * 4.2) * 0.45;
+        }
 
       } else if (stateRef.current.isCinematicActive) {
         // 6-Second cinematic descent down to the island
@@ -575,12 +670,13 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         const prog = Math.min(1.0, cinematicTimer / 6.0);
         const ease = 1 - Math.pow(1 - prog, 3);
 
-        camera.position.x = THREE.MathUtils.lerp(0, 0, ease);
-        camera.position.y = THREE.MathUtils.lerp(42, 6.8, ease);
-        camera.position.z = THREE.MathUtils.lerp(62, 17.5, ease);
-        camera.lookAt(avatar.position.x, avatar.position.y + 0.9, avatar.position.z);
+        camera.position.x = THREE.MathUtils.lerp(0, avatar.position.x, ease);
+        camera.position.y = THREE.MathUtils.lerp(38, avatar.position.y + 3.4, ease);
+        camera.position.z = THREE.MathUtils.lerp(48, avatar.position.z + 6.6, ease);
+        camera.lookAt(avatar.position.x, avatar.position.y + 1.1, avatar.position.z);
 
         if (prog >= 1.0) {
+          avatar.rotation.y = 0;
           stateRef.current.onCinematicComplete();
         }
 
@@ -613,13 +709,13 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
           avatar.rotation.y = THREE.MathUtils.damp(avatar.rotation.y, worldAngle, 12, delta);
 
           const distFromCenter = Math.hypot(avatar.position.x, avatar.position.z);
-          if (distFromCenter > 25.5) {
-            avatar.position.x = (avatar.position.x / distFromCenter) * 25.5;
-            avatar.position.z = (avatar.position.z / distFromCenter) * 25.5;
+          if (distFromCenter > 24.5) {
+            avatar.position.x = (avatar.position.x / distFromCenter) * 24.5;
+            avatar.position.z = (avatar.position.z / distFromCenter) * 24.5;
           }
 
-          const slopeT = Math.min(1.0, Math.max(0.0, (distFromCenter - 14) / 10));
-          const targetY = THREE.MathUtils.lerp(3.6, 0.2, slopeT);
+          const slopeT = Math.min(1.0, Math.max(0.0, (distFromCenter - 14) / 9.5));
+          const targetY = THREE.MathUtils.lerp(3.72, 0.45, slopeT);
           avatar.position.y = targetY;
 
           // Chibi Bouncy Walk: vertical bob + lateral wobble
@@ -627,7 +723,7 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
           const cycle = avatar.userData.walkCycle;
 
           if (avatar.userData.bodyGroup) {
-            avatar.userData.bodyGroup.position.y = Math.abs(Math.sin(cycle)) * 0.14;
+            avatar.userData.bodyGroup.position.y = 0.20 + Math.abs(Math.sin(cycle)) * 0.14;
             avatar.userData.bodyGroup.rotation.z = Math.sin(cycle) * 0.08;
           }
 
@@ -650,7 +746,7 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         } else {
           // Gentle breathing bob
           if (avatar.userData.bodyGroup) {
-            avatar.userData.bodyGroup.position.y = Math.sin(elapsed * 2.8) * 0.025;
+            avatar.userData.bodyGroup.position.y = 0.20 + Math.sin(elapsed * 2.8) * 0.025;
             avatar.userData.bodyGroup.rotation.z = 0;
           }
           if (avatar.userData.leftLeg) avatar.userData.leftLeg.rotation.x = 0;
@@ -664,16 +760,16 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         }
 
         // Smooth 3rd-Person Follow Camera with damping
-        const camDist = 7.2;
-        const camHeight = 3.0 + cameraPitch * 2.8;
+        const camDist = 6.6;
+        const camHeight = 2.6 + cameraPitch * 2.2;
         const targetCamX = avatar.position.x - Math.sin(cameraOrbitAngle) * camDist;
         const targetCamZ = avatar.position.z - Math.cos(cameraOrbitAngle) * camDist;
         const targetCamY = avatar.position.y + camHeight;
 
-        camera.position.x = THREE.MathUtils.damp(camera.position.x, targetCamX, 5.5, delta);
-        camera.position.y = THREE.MathUtils.damp(camera.position.y, targetCamY, 5.5, delta);
-        camera.position.z = THREE.MathUtils.damp(camera.position.z, targetCamZ, 5.5, delta);
-        camera.lookAt(avatar.position.x, avatar.position.y + 1.0, avatar.position.z);
+        camera.position.x = THREE.MathUtils.damp(camera.position.x, targetCamX, 6.0, delta);
+        camera.position.y = THREE.MathUtils.damp(camera.position.y, targetCamY, 6.0, delta);
+        camera.position.z = THREE.MathUtils.damp(camera.position.z, targetCamZ, 6.0, delta);
+        camera.lookAt(avatar.position.x, avatar.position.y + 1.15, avatar.position.z);
 
         // Interaction Prompts
         let foundPrompt: string | null = null;

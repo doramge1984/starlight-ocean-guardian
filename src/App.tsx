@@ -11,6 +11,7 @@ import { Stage2Experiment } from './components/experiments/Stage2Experiment';
 import { Stage3Experiment } from './components/experiments/Stage3Experiment';
 import { Stage4Experiment } from './components/experiments/Stage4Experiment';
 import { Stage5Designer } from './components/experiments/Stage5Designer';
+import { AvatarPreview } from './components/AvatarPreview';
 
 import {
   Sparkles,
@@ -341,31 +342,39 @@ export default function App() {
                 />
               </div>
 
-              {/* Avatar Selection */}
+              {/* Avatar Selection with Real-Time 3D Preview */}
               <div>
-                <label className="text-xs font-semibold text-slate-300 block mb-1">
-                  동물 아바타 선택:
+                <label className="text-xs font-semibold text-slate-300 block mb-1.5 flex items-center justify-between">
+                  <span>동물 아바타 선택 & 3D 실시간 미리보기:</span>
+                  <span className="text-[11px] text-cyan-300 font-mono font-medium">클릭 시 3D 모델 즉시 전환</span>
                 </label>
-                <div className="grid grid-cols-5 gap-1.5">
-                  {[
-                    { id: 'rabbit', label: '🐰 토끼' },
-                    { id: 'fox', label: '🦊 여우' },
-                    { id: 'bear', label: '🐻 곰' },
-                    { id: 'penguin', label: '🐧 펭귄' },
-                    { id: 'otter', label: '🦦 수달' },
-                  ].map((av) => (
-                    <button
-                      key={av.id}
-                      onClick={() => setAnimal(av.id)}
-                      className={`py-2 px-1 rounded-xl text-xs font-bold transition border ${
-                        animal === av.id
-                          ? 'bg-cyan-600 border-cyan-400 text-white shadow-md'
-                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {av.label}
-                    </button>
-                  ))}
+                <div className="flex flex-col sm:flex-row gap-3 items-center">
+                  <AvatarPreview animalType={animal} nickname={nickname} />
+                  <div className="flex-1 w-full grid grid-cols-5 sm:grid-cols-1 gap-1.5">
+                    {[
+                      { id: 'rabbit', label: '🐰 토끼', desc: '호기심 많은 귀' },
+                      { id: 'fox', label: '🦊 여우', desc: '날렵한 탐험가' },
+                      { id: 'bear', label: '🐻 곰', desc: '든든한 수호자' },
+                      { id: 'penguin', label: '🐧 펭귄', desc: '바다의 다이버' },
+                      { id: 'otter', label: '🦦 수달', desc: '조개박사 친구' },
+                    ].map((av) => (
+                      <button
+                        key={av.id}
+                        onClick={() => {
+                          setAnimal(av.id);
+                          soundEngine.playExperimentAction();
+                        }}
+                        className={`py-2 px-2.5 rounded-xl text-xs font-bold transition border flex items-center justify-between ${
+                          animal === av.id
+                            ? 'bg-cyan-600/90 border-cyan-300 text-white shadow-lg shadow-cyan-600/40 ring-1 ring-cyan-300'
+                            : 'bg-slate-900/90 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                        }`}
+                      >
+                        <span>{av.label}</span>
+                        <span className="hidden sm:inline text-[10px] text-cyan-200/70 font-normal">{av.desc}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
