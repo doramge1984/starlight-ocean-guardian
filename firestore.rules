@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions for score record validation
+    function isValidScoreRecord(data) {
+      return data.nickname is string &&
+             data.nickname.size() >= 2 && data.nickname.size() <= 8 &&
+             data.score is int &&
+             data.score >= 0 && data.score <= 8000 &&
+             data.quizAccuracy is int &&
+             data.quizAccuracy >= 0 && data.quizAccuracy <= 100 &&
+             data.stagesCleared is int &&
+             data.stagesCleared >= 0 && data.stagesCleared <= 5 &&
+             data.schoolLevel in ['elementary', 'middle', 'high'] &&
+             (data.classCode.size() == 0 || data.classCode.size() == 6);
+    }
+
+    // Scores collection: anyone can read and create a valid record, no update or delete
+    match /scores/{scoreId} {
+      allow read: if true;
+      allow create: if isValidScoreRecord(request.resource.data);
+      allow update, delete: if false;
+    }
+
+    // Classes collection: anyone can read, creation and incremental updates allowed within bounds (0~50 per increment), no delete
+    match /classes/{classCode} {
+      allow read: if true;
+      allow create: if request.resource.data.classCode == classCode &&
+                       request.resource.data.totalCollected >= 0 &&
+                       request.resource.data.pledgeCount >= 0;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['totalCollected', 'pledgeCount', 'classCode']) &&
+                       (request.resource.data.totalCollected - resource.data.totalCollected) >= 0 &&
+                       (request.resource.data.totalCollected - resource.data.totalCollected) <= 50 &&
+                       (request.resource.data.pledgeCount - resource.data.pledgeCount) >= 0 &&
+                       (request.resource.data.pledgeCount - resource.data.pledgeCount) <= 50;
+      allow delete: if false;
+    }
+  }
+}

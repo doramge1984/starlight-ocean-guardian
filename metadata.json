@@ -1,0 +1,6 @@
+{
+  "name": "별빛 바다 지킴이: 과학으로 되살리는 바다",
+  "description": "초·중·고 학생용 환경 과학 × 게임 리터러시 3D 메타버스 학습 게임. 과학으로 바다를 되살리고 친환경 게임을 설계합니다.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

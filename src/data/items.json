@@ -1,0 +1,112 @@
+[
+  {
+    "id": "item_pe_bag",
+    "stage": 1,
+    "name": "과자 비닐봉지",
+    "material": "PE (폴리에틸렌)",
+    "density": 0.92,
+    "floats": true,
+    "description": "바닷물(약 1.03g/cm³)보다 밀도가 낮아 수면에 둥둥 뜹니다. 비닐봉지, 지퍼백, 우유팩 코팅에 널리 쓰입니다.",
+    "color": "#67e8f9",
+    "score": 100
+  },
+  {
+    "id": "item_pp_cap",
+    "stage": 1,
+    "name": "음료수 병뚜껑",
+    "material": "PP (폴리프로필렌)",
+    "density": 0.90,
+    "floats": true,
+    "description": "가볍고 튼튼하며 밀도가 0.90g/cm³로 바닷물에 뜹니다. 요구르트병, 빨대, 뚜껑의 주원료입니다.",
+    "color": "#f59e0b",
+    "score": 100
+  },
+  {
+    "id": "item_pet_bottle",
+    "stage": 1,
+    "name": "투명 생수병",
+    "material": "PET (폴리에틸렌 테레프탈레이트)",
+    "density": 1.38,
+    "floats": false,
+    "description": "밀도가 1.38g/cm³로 바닷물보다 무거워 바닥으로 가라앉습니다. 투명 음료병이나 섬유 소재로 쓰입니다.",
+    "color": "#93c5fd",
+    "score": 100
+  },
+  {
+    "id": "item_ps_buoy",
+    "stage": 1,
+    "name": "스티로폼 부표 파편",
+    "material": "발포 폴리스티렌 (EPS)",
+    "density": 0.05,
+    "floats": true,
+    "description": "공기를 95% 이상 품고 있어 밀도가 매우 낮고 잘 부서져 해변을 오염시키는 주범입니다.",
+    "color": "#f1f5f9",
+    "score": 100
+  },
+  {
+    "id": "item_pvc_pipe",
+    "stage": 1,
+    "name": "수도관 파편",
+    "material": "PVC (폴리염화비닐)",
+    "density": 1.40,
+    "floats": false,
+    "description": "단단하고 무거운 플라스틱(밀도 약 1.40g/cm³)으로 바다 밑바닥에 가라앉아 퇴적됩니다.",
+    "color": "#cbd5e1",
+    "score": 100
+  },
+  {
+    "id": "item_micro_pellet",
+    "stage": 2,
+    "name": "1차 미세플라스틱 (너들)",
+    "material": "플라스틱 원료 알갱이 (<5mm)",
+    "density": 0.94,
+    "floats": true,
+    "description": "공장에서 플라스틱 제품을 만들기 전 가공 원료 알갱이로, 운반 중 유실되어 바다로 퍼집니다.",
+    "color": "#fbbf24",
+    "score": 120
+  },
+  {
+    "id": "item_micro_fragment",
+    "stage": 2,
+    "name": "2차 미세플라스틱 파편",
+    "material": "부서진 플라스틱 (<5mm)",
+    "density": 0.95,
+    "floats": true,
+    "description": "햇빛과 파도에 마모되어 5mm 이하로 쪼개진 조각입니다. 분자 사슬은 여전히 유지되어 있습니다.",
+    "color": "#f87171",
+    "score": 120
+  },
+  {
+    "id": "item_micro_fiber",
+    "stage": 2,
+    "name": "합성섬유 미세실 뭉치",
+    "material": "폴리에스터 섬유 (<5mm)",
+    "density": 1.35,
+    "floats": false,
+    "description": "옷을 세탁할 때 떨어져 나와 하수구를 통해 바다로 흘러든 초미세 섬유 조각입니다.",
+    "color": "#c084fc",
+    "score": 120
+  },
+  {
+    "id": "item_ghost_net",
+    "stage": 3,
+    "name": "버려진 폐그물 뭉치",
+    "material": "고강도 나일론/PE 어구",
+    "density": 1.15,
+    "floats": false,
+    "description": "바다 밑에 가라앉아 바다거북과 어류를 얽매는 유령 그물입니다. 수십 년간 썩지 않습니다.",
+    "color": "#34d399",
+    "score": 150
+  },
+  {
+    "id": "item_acid_debris",
+    "stage": 4,
+    "name": "산성화로 부서진 백화 산호 골격",
+    "material": "용해된 탄산칼슘 (CaCO₃)",
+    "density": 2.71,
+    "floats": false,
+    "description": "높아진 수소 이온(H⁺) 농도로 탄산 이온이 고갈되어 껍데기를 온전히 유지하지 못하고 백화된 골격입니다.",
+    "color": "#fbcfe8",
+    "score": 150
+  }
+]
