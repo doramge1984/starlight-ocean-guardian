@@ -6,26 +6,26 @@ import * as THREE from 'three';
 
 // Stylized Material Palette with Flat/Smooth Shading Contrast
 const materials = {
-  // Chibi Fur & Skin (with subtle warm emissive boost so character pops brightly at night)
-  rabbitWhite: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.5, emissive: 0x475569, emissiveIntensity: 0.35, flatShading: true }),
-  rabbitPink: new THREE.MeshStandardMaterial({ color: 0xfda4af, roughness: 0.6, emissive: 0x9f1239, emissiveIntensity: 0.25, flatShading: true }),
+  // Chibi Fur & Skin (clean stylized tones, soft night readability without overexposure)
+  rabbitWhite: new THREE.MeshStandardMaterial({ color: 0xf1f5f9, roughness: 0.65, emissive: 0x1e293b, emissiveIntensity: 0.12, flatShading: true }),
+  rabbitPink: new THREE.MeshStandardMaterial({ color: 0xfda4af, roughness: 0.7, emissive: 0x4c0519, emissiveIntensity: 0.1, flatShading: true }),
   cheeks: new THREE.MeshBasicMaterial({ color: 0xfb7185 }), // Rosy blush cheeks
   eyePupil: new THREE.MeshBasicMaterial({ color: 0x020617 }),
   eyeGlint: new THREE.MeshBasicMaterial({ color: 0xffffff }),
 
-  foxOrange: new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.5, emissive: 0x9a3412, emissiveIntensity: 0.4, flatShading: true }),
-  foxWhite: new THREE.MeshStandardMaterial({ color: 0xffedd5, roughness: 0.6, emissive: 0x64748b, emissiveIntensity: 0.3, flatShading: true }),
-  foxBlack: new THREE.MeshStandardMaterial({ color: 0x1e1510, roughness: 0.7, emissive: 0x0f0a06, emissiveIntensity: 0.2, flatShading: true }),
+  foxOrange: new THREE.MeshStandardMaterial({ color: 0xea580c, roughness: 0.6, emissive: 0x431407, emissiveIntensity: 0.12, flatShading: true }),
+  foxWhite: new THREE.MeshStandardMaterial({ color: 0xffedd5, roughness: 0.65, emissive: 0x334155, emissiveIntensity: 0.1, flatShading: true }),
+  foxBlack: new THREE.MeshStandardMaterial({ color: 0x1e1510, roughness: 0.7, emissive: 0x0a0705, emissiveIntensity: 0.05, flatShading: true }),
 
-  bearBrown: new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.6, emissive: 0x78350f, emissiveIntensity: 0.4, flatShading: true }),
-  bearSnout: new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.65, emissive: 0x92400e, emissiveIntensity: 0.35, flatShading: true }),
+  bearBrown: new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.7, emissive: 0x451a03, emissiveIntensity: 0.12, flatShading: true }),
+  bearSnout: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.7, emissive: 0x451a03, emissiveIntensity: 0.1, flatShading: true }),
 
-  penguinNavy: new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.45, emissive: 0x0f172a, emissiveIntensity: 0.4, flatShading: true }),
-  penguinWhite: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.5, emissive: 0x475569, emissiveIntensity: 0.35, flatShading: true }),
-  penguinYellow: new THREE.MeshStandardMaterial({ color: 0xfbbf24, roughness: 0.45, emissive: 0xd97706, emissiveIntensity: 0.4, flatShading: true }),
+  penguinNavy: new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.55, emissive: 0x020617, emissiveIntensity: 0.08, flatShading: true }),
+  penguinWhite: new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.6, emissive: 0x1e293b, emissiveIntensity: 0.1, flatShading: true }),
+  penguinYellow: new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.55, emissive: 0x78350f, emissiveIntensity: 0.1, flatShading: true }),
 
-  otterWarm: new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.55, emissive: 0x78350f, emissiveIntensity: 0.4, flatShading: true }),
-  otterChest: new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.6, emissive: 0xa16207, emissiveIntensity: 0.35, flatShading: true }),
+  otterWarm: new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.65, emissive: 0x3b1d03, emissiveIntensity: 0.12, flatShading: true }),
+  otterChest: new THREE.MeshStandardMaterial({ color: 0xfef08a, roughness: 0.7, emissive: 0x422006, emissiveIntensity: 0.1, flatShading: true }),
 
   // Island Environment
   sandShore: new THREE.MeshStandardMaterial({ color: 0xe0be8b, roughness: 0.9, flatShading: true }),
@@ -96,9 +96,9 @@ export function createAnimalAvatar(animalType: string = 'rabbit'): AnimatedAvata
   // Scale up chibi avatar slightly for clarity and adorable presence
   root.scale.set(1.35, 1.35, 1.35);
 
-  // Soft Character Key/Fill Light so face, eyes, and fur glow warmly from camera perspective
-  const charLight = new THREE.PointLight(0xfff5e6, 1.9, 7.5, 1.5);
-  charLight.position.set(0, 1.6, 1.0);
+  // Very soft localized face/chest fill light (0.35 intensity, short reach) so it never floods the ground
+  const charLight = new THREE.PointLight(0xffedd5, 0.35, 2.8, 2.0);
+  charLight.position.set(0, 1.1, 0.5);
   charLight.name = 'charLight';
   root.add(charLight);
 

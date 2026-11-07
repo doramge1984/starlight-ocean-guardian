@@ -149,9 +149,9 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
       }
     })();
 
-    // Scene & Deep Night Fog
+    // Scene & Deep Night Fog (0.007 for crystal clear clarity nearby, gentle ocean horizon mist)
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x051329, 0.0125);
+    scene.fog = new THREE.FogExp2(0x051329, 0.007);
 
     const camera = new THREE.PerspectiveCamera(
       52,
@@ -179,25 +179,18 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     );
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.2;
+    renderer.toneMappingExposure = 1.0;
     renderer.shadowMap.enabled = !isSoftwareGl && graphicsQuality !== 'low';
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     mountRef.current.appendChild(renderer.domElement);
 
-    // Procedural Studio Environment for PBR Reflections
-    try {
-      const pmremGenerator = new THREE.PMREMGenerator(renderer);
-      scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-      pmremGenerator.dispose();
-    } catch (e) {}
-
-    // Lighting Rig: Moonlight Key + Cool Sky Fill
-    const hemisphereLight = new THREE.HemisphereLight(0x38bdf8, 0x061124, 0.65);
+    // Deep Nocturnal Lighting: Gentle Sky Ambient + Focused Directional Moonlight
+    const hemisphereLight = new THREE.HemisphereLight(0x2a4468, 0x07111e, 0.55);
     scene.add(hemisphereLight);
 
     // Directional Moonlight matching Moon Position (-35, 45, -95)
-    const moonDirLight = new THREE.DirectionalLight(0xdbeafe, 1.9);
+    const moonDirLight = new THREE.DirectionalLight(0xcfd8dc, 0.95);
     moonDirLight.position.set(-35, 45, -95);
     moonDirLight.castShadow = !isSoftwareGl && graphicsQuality !== 'low';
     moonDirLight.shadow.mapSize.width = 1024;
@@ -211,7 +204,7 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     moonDirLight.shadow.bias = -0.0004;
     scene.add(moonDirLight);
 
-    // Post-Processing Composer (EffectComposer + UnrealBloomPass + Vignette + OutputPass)
+    // Post-Processing Composer with High-Threshold Bloom (only embers & fire bloom, never terrain)
     let composer: EffectComposer | null = null;
     if (!isSoftwareGl && graphicsQuality !== 'low') {
       try {
@@ -219,12 +212,12 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         const renderPass = new RenderPass(scene, camera);
         composer.addPass(renderPass);
 
-        // UnrealBloomPass: dreamy night glow
+        // UnrealBloomPass: threshold at 0.88 prevents ground & models from washing out
         const bloomPass = new UnrealBloomPass(
           new THREE.Vector2(mountRef.current.clientWidth, mountRef.current.clientHeight),
-          graphicsQuality === 'high' ? 1.2 : 0.7, // intensity
-          0.75, // radius
-          0.55  // threshold
+          graphicsQuality === 'high' ? 0.35 : 0.20, // intensity: gentle starlight halo
+          0.35, // radius
+          0.88  // threshold: ensures only glowing embers, beacon and aurora edges glow
         );
         composer.addPass(bloomPass);
 
@@ -259,8 +252,8 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
     const terrainGeo = new THREE.CylinderGeometry(28, 38, 3.8, 36);
     terrainGeo.translate(0, 1.8, 0);
     const sandMat = new THREE.MeshStandardMaterial({
-      color: 0xdec092,
-      roughness: 0.9,
+      color: 0x9e7b54,
+      roughness: 0.95,
       flatShading: true,
     });
     const terrainMesh = new THREE.Mesh(terrainGeo, sandMat);
@@ -381,47 +374,44 @@ export const ThreeCanvas: React.FC<ThreeCanvasProps> = ({
         nicknameSprite.material.dispose();
       }
       const canvas = document.createElement('canvas');
-      canvas.width = 320;
-      canvas.height = 80;
+      canvas.width = 256;
+      canvas.height = 64;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      ctx.clearRect(0, 0, 320, 80);
+      ctx.clearRect(0, 0, 256, 64);
 
-      // Pill container background
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.90)';
+      // Compact dark translucent pill badge
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
       ctx.beginPath();
-      ctx.roundRect(14, 10, 292, 60, 30);
+      ctx.roundRect(16, 10, 224, 44, 22);
       ctx.fill();
 
-      // Glowing Cyan Border
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 3.5;
-      ctx.shadowColor = '#38bdf8';
-      ctx.shadowBlur = 12;
+      // Sharp cyan border (no shadow blur to avoid blooming)
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.roundRect(14, 10, 292, 60, 30);
+      ctx.roundRect(16, 10, 224, 44, 22);
       ctx.stroke();
-      ctx.shadowBlur = 0;
 
-      // Nickname text
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 26px sans-serif';
+      // Clean crisp white text
+      ctx.fillStyle = '#f8fafc';
+      ctx.font = 'bold 20px sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const cleanName = (nameStr || '별빛 지킴이').trim();
-      ctx.fillText(`⭐ ${cleanName}`, 160, 41);
+      ctx.fillText(`⭐ ${cleanName}`, 128, 33);
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.minFilter = THREE.LinearFilter;
       const spriteMat = new THREE.SpriteMaterial({
         map: texture,
         transparent: true,
-        depthTest: false,
+        depthTest: true,
       });
       nicknameSprite = new THREE.Sprite(spriteMat);
-      nicknameSprite.scale.set(2.4, 0.6, 1);
-      nicknameSprite.position.set(0, 2.05, 0);
+      nicknameSprite.scale.set(1.4, 0.35, 1);
+      nicknameSprite.position.set(0, 2.15, 0);
       avatar.add(nicknameSprite);
     }
 
